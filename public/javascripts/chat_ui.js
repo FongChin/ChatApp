@@ -14,7 +14,11 @@
 
 	ChatUI.prototype.sendMessage = function(){
 		var msg = this.getMessage();
-		this.chat.sendMessage(msg);
+		if(msg.slice(0, 5) == "/nick") {
+			this.chat.setNickname(msg.slice(6));
+		} else {
+			this.chat.sendMessage(msg);
+		}
 	}
 
 })(this);
