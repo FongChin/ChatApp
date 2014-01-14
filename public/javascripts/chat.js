@@ -19,7 +19,13 @@
 				user_field.append($("<li>").text(value));
 			});
 		});
+
+		socket.on('changeRoom', function(room){
+			this.room = room;
+		});
 	}
+
+	Chat.commands = ["nick", "join"];
 
 	Chat.prototype.sendMessage = function(data) {
 		this.socket.emit("message", data);
@@ -31,7 +37,7 @@
 
 	Chat.prototype.processCommand = function(str) {
 		var args = str.split(' ');
-		if (args[0] === "nick"){
+		if (Chat.commands.indexOf(args[0]) > -1){
 			this.socket.emit(args[0] + "Request", args.slice(1));
 		} else{
 			alert("event not found");
