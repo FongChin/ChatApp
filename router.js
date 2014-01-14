@@ -10,14 +10,18 @@ exports.handle = function(request, response) {
 	function cacheFile(url) {
 		fs.readFile("./public" + url, function(err, data) {
 			if(err) {
-				cache[url] = cache['/404.html'];
+				cache[url] = { status: 404, body: cache['/404.html'] };
 			} else {
-				cache[url] = data;
-				response.end(data);
+				cache[url] = { status: 200, body: data };
 			}
 
-			response.end(cache[url]);
+			post(cache[url]);
 		});
+	}
+
+	function post(file) {
+		response.writeHead(file.status, header);
+		response.end(file.body);
 	}
 
 	function getFile(url) {
@@ -26,14 +30,13 @@ exports.handle = function(request, response) {
 
 	function respond(url){
 		var file = getFile(url);
-		file && response.end(file);
+		file && post(file);
 	}
 
 	if (request.url === "/") {
 		request.url = "/index.html";
 	}
 
-	response.writeHead(200, header);
 	respond(request.url);
 
 }
